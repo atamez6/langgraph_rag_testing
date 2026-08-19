@@ -33,3 +33,4 @@ retriever = Chroma(
     embedding_function=embedding_ollama,
     collection_name="rag-chroma"
 ).as_retriever()
+
