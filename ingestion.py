@@ -22,12 +22,13 @@ docs_list = [item for sublist in docs for item in sublist]
 text_splitter = RecursiveCharacterTextSplitter.from_tiktoken_encoder(chunk_size=250, chunk_overlap=0)
 
 doc_splits = text_splitter.split_documents(docs_list)
+'''
 vectorstore= Chroma.from_documents(
     documents=doc_splits,
     embedding=embedding_ollama,
     persist_directory="./.chroma",
     collection_name="rag-chroma"
-)
+)'''
 retriever = Chroma(
     persist_directory="./.chroma",
     embedding_function=embedding_ollama,
