@@ -5,10 +5,19 @@ from graph.chains.retrieval_grader import GradeDocuments, retrieval_grader
 
 
 def test_retrieval_grader_as_yes() -> None:
-    question = "What is the main topic of the article?"
+    question = "system memory"
     docs = retriever.invoke(question)
     doc_txt = docs[0].page_content
     res: GradeDocuments = retrieval_grader.invoke(
-        {"question": question, "document": doc_txt}
+        {"question": "What is the main topic of the article?", "document": doc_txt}
     )
     assert res.binary_score == "yes"
+
+def test_retrieval_grader_as_no() -> None:
+    question = "system memory"
+    docs = retriever.invoke(question)
+    doc_txt = docs[0].page_content
+    res: GradeDocuments = retrieval_grader.invoke(
+        {"question": "What pizza?", "document": doc_txt}
+    )
+    assert res.binary_score == "no"
