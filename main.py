@@ -5,4 +5,4 @@ load_dotenv()
 from graph.graph import app
 if __name__ == '__main__':
     print("hello world")
-    print(app.invoke(input={"question": "What is the capital of France?"}))
+    print(app.invoke(input={"question": "What is agent memory?"}))
