@@ -6,7 +6,7 @@ from graph.chains.retrieval_grader import GradeDocuments, retrieval_grader
 from graph.chains.generation import generation_chain
 from ingestion import retriever
 from pprint import pprint
-
+from graph.chains.router import question_router
 
 def test_retrieval_grader_as_yes() -> None:
     question = "system memory"
@@ -56,3 +56,10 @@ def test_hallucination_grader_no() -> None:
     res : GradeHallucinations = hallucination_grader.invoke({"documents": docs, "generation": "pizza is good"})
     assert not res.binary_score
     pprint(res)
+
+
+
+def test_question_router() -> None:
+    question = "agent memory"
+    route = question_router.invoke({"question": question})
+    pprint(route)

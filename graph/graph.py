@@ -6,6 +6,7 @@ from graph.consts import RETRIEVE, GRADE_DOCUMENTS, GENERATE, WEBSEARCH
 from graph.state import GraphState
 from graph.chains.answer_grader import answer_grader
 from graph.chains.hallucination_grader import hallucination_grader
+from graph.chains.router import question_router
 
 
 def decide_generate(state):
@@ -44,7 +45,13 @@ def grade_generation_grounded_in_documents_and_question(state: GraphState) -> st
         print("---DECISION: GENERATION IS NOT GROUNDED IN DOCUMENTS---")
         return "not_supported"
     
-
+def route_question(state: GraphState) -> str:
+    question = state["question"]
+    route = question_router.invoke({"question": question})
+    if route["datasource"] == WEBSEARCH:
+        return WEBSEARCH
+    elif route["datasource"] == RETRIEVE:
+        return RETRIEVE
 
 workflow = StateGraph(GraphState)
 
@@ -53,7 +60,7 @@ workflow.add_node(GRADE_DOCUMENTS, grade_documents)
 workflow.add_node(GENERATE, generate)
 workflow.add_node(WEBSEARCH, web_search)
 
-workflow.set_entry_point(RETRIEVE)
+workflow.set_conditional_entry_point(route_question)
 workflow.add_edge(RETRIEVE, GRADE_DOCUMENTS)
 workflow.add_conditional_edges(GRADE_DOCUMENTS, decide_generate, {WEBSEARCH: WEBSEARCH, GENERATE: GENERATE})
 workflow.add_conditional_edges(GENERATE, grade_generation_grounded_in_documents_and_question, {"useful": END, "not_useful": WEBSEARCH, "not_supported": GENERATE})
